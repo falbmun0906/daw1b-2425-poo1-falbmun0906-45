@@ -5,7 +5,7 @@ fun pedirValor(msj: String, aceptaVacio: Boolean = true) : Int {
     do {
         print(msj)
         val entrada = readln().trim()
-        if (entrada.isEmpty()) {
+        if (aceptaVacio && entrada.isEmpty()) {
             valor = 0
         } else {
             try {
@@ -23,4 +23,12 @@ fun main() {
     val hora = pedirValor("Introduce la hora: ", false)
     val minuto = pedirValor("Introduce los minutos: ")
     val segundo = pedirValor("Introduce los segundos: ")
+
+    val tiempo1: Tiempo = Tiempo(hora, minuto, segundo)
+    val tiempo2: Tiempo = Tiempo(1, 40,80)
+
+    print(tiempo1)
+    tiempo1.incrementar(tiempo2)
+    print(tiempo1)
+
 }
