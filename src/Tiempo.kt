@@ -82,33 +82,25 @@ class Tiempo(var hora: Int, var minuto: Int, var segundo: Int) {
     }
 
     fun copiar(): Tiempo {
-        return Tiempo(this.hora, this.minuto, this.segundo)
+        return Tiempo(hora, minuto, segundo)
     }
 
     fun copiar(t: Tiempo): Tiempo {
-        hora = t.hora
-        minuto = t.minuto
-        segundo = t.segundo
+        this.hora = t.hora
+        this.minuto = t.minuto
+        this.segundo = t.segundo
 
         return t
     }
 
     fun sumar(t: Tiempo): Tiempo? {
-        val segundosSuma: Int = calcularSegundosTotales(t.segundo, t.minuto, t.hora)
-        val segundosActual: Int = calcularSegundosTotales(this.segundo, this.minuto, this.hora)
-        val tiempoNuevo = segundosAHorMinSeg(segundosSuma + segundosActual)
-        if (tiempoNuevo.first in 0..MAX_HORA) {
-            return Tiempo(tiempoNuevo.first, tiempoNuevo.second, tiempoNuevo.third)
-        } else return null
+        val copia = this.copiar()
+        return (if (copia.incrementar(t)) copia else null)
     }
 
     fun restar(t: Tiempo): Tiempo? {
-        val segundosResta: Int = calcularSegundosTotales(t.segundo, t.minuto, t.hora)
-        val segundosActual: Int = calcularSegundosTotales(this.segundo, this.minuto, this.hora)
-        if (segundosActual - segundosResta >= 0) {
-            val tiempoNuevo = segundosAHorMinSeg(segundosActual - segundosResta)
-            return Tiempo(tiempoNuevo.first, tiempoNuevo.second, tiempoNuevo.third)
-        } else return null
+        val copia = this.copiar()
+        return (if (copia.decrementar(t)) copia else null)
     }
 
     fun esMayorQue(t:Tiempo): Boolean {
