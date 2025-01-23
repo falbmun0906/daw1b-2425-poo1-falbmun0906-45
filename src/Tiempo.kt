@@ -86,7 +86,11 @@ class Tiempo(var hora: Int, var minuto: Int, var segundo: Int) {
     }
 
     fun copiar(t: Tiempo): Tiempo {
-        return Tiempo(t.hora, t.minuto, t.segundo)
+        hora = t.hora
+        minuto = t.minuto
+        segundo = t.segundo
+
+        return t
     }
 
     fun sumar(t: Tiempo): Tiempo? {

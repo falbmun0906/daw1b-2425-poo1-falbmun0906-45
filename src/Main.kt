@@ -73,7 +73,7 @@ fun main() {
 
     println("\nRESTA DE TIEMPOS: Introduce el tiempo a restar al valor principal.")
     t = crearTiempo()
-    tiempo3 = tiempo1.sumar(t)
+    tiempo3 = tiempo1.restar(t)
     if (tiempo3 != null) {
         println("Nuevo tiempo principal: $tiempo3")
     } else println("ERROR: Tiempo inferior a 00:00:00.")
