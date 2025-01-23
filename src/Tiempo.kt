@@ -24,43 +24,98 @@ class Tiempo(var hora: Int, var minuto: Int, var segundo: Int) {
 
     fun ajustar() {
         val totalSegundos: Int = calcularSegundosTotales(segundo, minuto, hora)
-        hora = segundosATiempo(totalSegundos)[0]
-        minuto = segundosATiempo(totalSegundos)[1]
-        segundo = segundosATiempo(totalSegundos)[2]
+        hora = segundosAHorMinSeg(totalSegundos).first
+        minuto = segundosAHorMinSeg(totalSegundos).second
+        segundo = segundosAHorMinSeg(totalSegundos).third
         validarHora()
     }
 
-    fun segundosATiempo(segundos: Int): List<Int> {
+    fun segundosAHorMinSeg(segundos: Int): Triple<Int, Int, Int> {
         var segundos = segundos
         val hora = (segundos / 3600)
-        segundos -= hora * 3600
+        segundos %= 3600
         val minuto = segundos / 60
         val segundo = segundos % 60
-        return listOf(hora, minuto, segundo)
+        return Triple(hora, minuto, segundo)
     }
 
     fun validarHora() {
         require(hora in 0..MAX_HORA) { "La hora debe estar entre 0 y 23!" }
     }
 
-    fun incrementar(t:Tiempo):Boolean {
-        val segundosIncremento: Int = calcularSegundosTotales(t.segundo, t.minuto, t.hora)
-        println(segundosIncremento)
-
-        var segundosActual: Int = calcularSegundosTotales(this.segundo, this.minuto, this.hora)
-        println(segundosActual)
-
-        val tiempoNuevo = segundosATiempo(segundosActual + segundosIncremento)
-        if (tiempoNuevo[0] in 0..MAX_HORA) {
-            hora = tiempoNuevo[0]
-            minuto = tiempoNuevo[1]
-            segundo = tiempoNuevo[2]
+    fun actualizarTiempo(segundosTotales: Int): Boolean {
+        val tiempoNuevo = segundosAHorMinSeg(segundosTotales)
+        if (tiempoNuevo.first in 0..MAX_HORA) {  // Comprobar si la hora es válida
+            hora = tiempoNuevo.first
+            minuto = tiempoNuevo.second
+            segundo = tiempoNuevo.third
             return true
-        } else return false
+        }
+        return false
+    }
+
+    fun incrementar(t: Tiempo): Boolean {
+        val segundosIncremento: Int = calcularSegundosTotales(t.segundo, t.minuto, t.hora)
+        val segundosActual: Int = calcularSegundosTotales(this.segundo, this.minuto, this.hora)
+        return actualizarTiempo(segundosActual + segundosIncremento)
+    }
+
+    fun decrementar(t: Tiempo): Boolean {
+        val segundosIncremento: Int = calcularSegundosTotales(t.segundo, t.minuto, t.hora)
+        val segundosActual: Int = calcularSegundosTotales(this.segundo, this.minuto, this.hora)
+        return if (segundosActual - segundosIncremento > 0) {
+            actualizarTiempo(segundosActual - segundosIncremento)
+        } else {
+            false
+        }
+    }
+
+    fun comparar(t: Tiempo): Int {
+        val segundosT: Int = calcularSegundosTotales(t.segundo, t.minuto, t.hora)
+        val segundosActual: Int = calcularSegundosTotales(this.segundo, this.minuto, this.hora)
+
+        return when {
+            segundosActual < segundosT -> -1
+            segundosActual > segundosT -> 1
+            else -> 0
+        }
+    }
+
+    fun copiar(): Tiempo {
+        return Tiempo(this.hora, this.minuto, this.segundo)
+    }
+
+    fun copiar(t: Tiempo): Tiempo {
+        return Tiempo(t.hora, t.minuto, t.segundo)
+    }
+
+    fun sumar(t: Tiempo): Tiempo? {
+        val segundosSuma: Int = calcularSegundosTotales(t.segundo, t.minuto, t.hora)
+        val segundosActual: Int = calcularSegundosTotales(this.segundo, this.minuto, this.hora)
+        val tiempoNuevo = segundosAHorMinSeg(segundosSuma + segundosActual)
+        if (tiempoNuevo.first in 0..MAX_HORA) {
+            return Tiempo(tiempoNuevo.first, tiempoNuevo.second, tiempoNuevo.third)
+        } else return null
+    }
+
+    fun restar(t: Tiempo): Tiempo? {
+        val segundosResta: Int = calcularSegundosTotales(t.segundo, t.minuto, t.hora)
+        val segundosActual: Int = calcularSegundosTotales(this.segundo, this.minuto, this.hora)
+        if (segundosActual - segundosResta >= 0) {
+            val tiempoNuevo = segundosAHorMinSeg(segundosActual - segundosResta)
+            return Tiempo(tiempoNuevo.first, tiempoNuevo.second, tiempoNuevo.third)
+        } else return null
+    }
+
+    fun esMayorQue(t:Tiempo): Boolean {
+        return comparar(t) == 1
+    }
+
+    fun esMenorQue(t:Tiempo): Boolean {
+        return comparar(t) == -1
     }
 
     override fun toString(): String {
         return "${"%02d".format(hora)}h ${"%02d".format(minuto)}m ${"%02d".format(segundo)}s"
     }
-
 }
